@@ -1,10 +1,12 @@
+{% from "apache/map.jinja" import apache with context %}
+
 include:
   - apache.restart
 
 apache_config_file:
   file.managed:
-    - name: /etc/apache2/apache2.conf
-    - source: salt://apache/files/apache2.conf
+    - name: {{ apache.config }}
+    - source: {{ apache.config_source }}
     - require:
-      - pkg: apache2
+      - pkg: {{ apache.package }}
 
