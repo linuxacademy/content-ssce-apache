@@ -9,16 +9,20 @@ vhosts_dir:
 
 {% endif %}
 
-eski_vhosts:
+{% for site, arg in salt['pillar.get']('apache:vhosts', {}).items() %}
+
+{{ site }}_vhost_gen:
   apache.configfile:
-    - name: {{ apache.vhost_loc }}eski.conf
+    - name: {{ apache.vhost_loc }}{{ site }}
     - config:
       - VirtualHost:
           this: '*:80'
           ServerName:
-            - eski.com
+            - {{ arg.servername }}
           ServerAlias:
-            - www.eski.com
-          ErrorLog: logs/website.com-error_log
-          CustomLog: logs/website.com-access_log combined
-          DocumentRoot: /var/www/html/website.com
+            - {{ arg.serveralias }}
+          ErrorLog: {{ arg.errorlog }}
+          CustomLog: {{ arg.customlog }}
+          DocumentRoot: {{ arg.docroot }}
+
+{% endfor %}
